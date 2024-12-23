@@ -7,8 +7,8 @@ from nltk.stem.porter import PorterStemmer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load data frames
-credits_df = pd.read_csv("https://raw.githubusercontent.com/martinsasia/Films-Recommender/refs/heads/main/Datasets/credits.csv")
-movies_df = pd.read_csv("https://raw.githubusercontent.com/martinsasia/Films-Recommender/refs/heads/main/Datasets/movies.csv")
+credits_df = pd.read_csv("https://raw.githubusercontent.com/martinsasia/Films-Recommender/refs/heads/main/credits.csv")
+movies_df = pd.read_csv("https://raw.githubusercontent.com/martinsasia/Films-Recommender/refs/heads/main/movies.csv")
 movies_df_raw = movies_df.copy()
 pd.set_option('display.max_columns',None)
 pd.set_option('display.max_rows',10)
