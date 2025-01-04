@@ -66,6 +66,8 @@ movies_df['crew'] = movies_df['crew'].apply(extract_director_name)
 # Convert elements into a list of the element
 movies_df['crew'] = movies_df['crew'].apply(lambda x: [x])
 
+# Save a copy of the dataframe
+movies_df3 = movies_df.copy()
 
 # Split the overview field. After could be replace by a tokenization
 movies_df['overview'] = movies_df['overview'].apply(lambda x: x.split() if isinstance(x, str) else [])
@@ -110,13 +112,42 @@ movies_df2['tags'] = movies_df2['tags'].apply(stemmer)
 # Meassure all the similarities of the vectors between them. It appears a diagonal of ones.
 similarity = cosine_similarity(vectors)
 # Function of recommending
+#def recommend(movie):
+#    movie_index = movies_df2[movies_df2['title'] == movie].index[0]
+#    distances = similarity[movie_index]
+#    movies_list = sorted(list(enumerate(distances)), reverse= True, key = lambda x : x[1])[1:6]
+
+#    recommended_titles = []
+#    for i in movies_list:
+#        recommended_titles.append(movies_df2.iloc[i[0]].title)
+
+#    return recommended_titles
+
 def recommend(movie):
     movie_index = movies_df2[movies_df2['title'] == movie].index[0]
     distances = similarity[movie_index]
-    movies_list = sorted(list(enumerate(distances)), reverse= True, key = lambda x : x[1])[1:6]
+    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
 
-    recommended_titles = []
+    recommended_indices = []
     for i in movies_list:
-        recommended_titles.append(movies_df2.iloc[i[0]].title)
+        recommended_indices.append(i[0])
 
-    return recommended_titles
+    return recommended_indices
+
+# Make a df with the genres and the index of the movie
+movies_df.genres= movies_df.genres.apply(lambda x: 'Others' if len(x)==0 else x[0])
+genres_df = movies_df[['genres']]
+genres_df = genres_df.explode('genres')
+
+# Create a dictionary to hold the genres and their corresponding indices
+genres_dict = {}
+
+# Iterate over the rows of the genres_df dataframe
+for index, row in genres_df.iterrows():
+    genre = row['genres']
+    if genre not in genres_dict:
+        genres_dict[genre] = []
+    genres_dict[genre].append(index)
+
+# Convert the dictionary to a dataframe
+genres_index_df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in genres_dict.items()]))
